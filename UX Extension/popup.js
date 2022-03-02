@@ -69,7 +69,7 @@ function nameFunc(tab){
     var url = tab.url;
 
     if(url.indexOf(','+customParam) === -1 && url.indexOf('%3D'+customParam) === -1){
-        var newUrl = url.substring(0,url.indexOf('&levels')) + ',' + customParam + url.substring(url.indexOf('&levels'))
+        var newUrl = url.substring(0,url.indexOf('&fields')+8) + customParam + url.substring(url.indexOf('&levels'))
         chrome.tabs.update(tab.id, {url: newUrl});
     }
 }
