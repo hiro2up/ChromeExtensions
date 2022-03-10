@@ -26,6 +26,17 @@ nameButton.addEventListener("click", async () => {
     });
   });
 
+// Submiting choices in from the switches
+submitChoices.addEventListener("click", async () => {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: fieldChoices(tab),
+    });
+});
+
+
 // The body of this function will be executed as a content script inside the
 // current page
 
@@ -71,12 +82,30 @@ function nameFunc(tab){
     if(url.indexOf(','+customParam) === -1 && url.indexOf('%3D'+customParam) === -1){
         var newUrl = url.substring(0,url.indexOf('&fields')+8) + customParam + url.substring(url.indexOf('&levels'))
         chrome.tabs.update(tab.id, {url: newUrl});
-        window.addEventListener('keydown', (e) => {
-          console.log(e)
-        })
         
-        window.dispatchEvent(new KeyboardEvent('keydown', {
-          'key': '116'
-        }));
+        // chrome.tabs.onUpdated.addListener(
+        //   tab.id, {url: newUrl}
+        // );
+        // chrome.tabs.reload();
+
+        // window.addEventListener('keydown', (e) => {
+        //   console.log(e)
+        // })
+
+        
+        
+        // window.dispatchEvent(new KeyboardEvent('keydown', {
+        //   'key': 'F5'
+        // }));
     }
+}
+
+
+// Collecting the switch values
+function fieldChoices(tab){
+  console.log('test');
+  const form = document.getElementById('fieldChoices');
+  Array.from(form.elements).forEach(element => {
+    console.log(element);
+  });
 }
