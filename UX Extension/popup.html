@@ -7,23 +7,40 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
   </head>
   <body>
-    <div class="d-grid gap-2 mb-3">
+    <!-- <div class="d-grid gap-2 mb-3">
       <button id="boltLive" class="btn btn-primary">Force Bolt on Live Site</button>
       <button id="tbLive" class="btn btn-primary">Force TB on Live Site</button>
       <button id="boltEditor" class="btn btn-primary">Force Bolt on Editor</button>
       <button id="tbEditor" class="btn btn-primary">Force TB on Editor</button>
-    </div>
+    </div> -->
 
-    <div class="d-grid gap-2 mb-3">
+    <!-- <div class="d-grid gap-2 mb-3">
       <button id="nameButton" class="btn btn-success">name</button>
       <button id="component_id" class="btn btn-success">component_id</button>
       <button id="component_type" class="btn btn-success">component_type</button>
       <button id="page_id" class="btn btn-success">page_id</button>
-    </div>
+    </div> -->
     
+    <div id="ext-title">User Explorer Query Tool</div>
 
     
     <form id="fieldChoices">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="date_createdSwitch" />
+        <label class="form-check-label" for="nameSwitch">date_created</label>
+      </div>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="srcSwitch" />
+        <label class="form-check-label" for="component_idSwitch">src</label>
+      </div>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="evidSwitch" />
+        <label class="form-check-label" for="component_typeSwitch">evid</label>
+      </div>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="evid_descSwitch" />
+        <label class="form-check-label" for="page_idSwitch">evid_desc</label>
+      </div>
       <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="nameSwitch" />
         <label class="form-check-label" for="nameSwitch">name</label>

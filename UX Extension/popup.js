@@ -103,9 +103,16 @@ function nameFunc(tab){
 
 // Collecting the switch values
 function fieldChoices(tab){
-  console.log('test');
-  const form = document.getElementById('fieldChoices');
+  // console.log('test');
+  // const form = document.getElementById('fieldChoices');
+  // Array.from(form.elements).forEach(element => {
+  //   console.log(element);
+  // });
+
+  var customParam = encodeURI('name');
+  var url = tab.url;
   Array.from(form.elements).forEach(element => {
-    console.log(element);
+    var newUrl = url + element
   });
+  chrome.tabs.update(tab.id, {url: newUrl});
 }

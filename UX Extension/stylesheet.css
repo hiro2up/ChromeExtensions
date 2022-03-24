@@ -9,6 +9,24 @@ button {
     margin-bottom: 50px;
 }
 
+#ext-title {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#fieldChoices {
+  margin: 0px 0px 20px 10px;
+}
+
+#fieldChoices label {
+  font-size: 14px;
+}
+
+#submitChoices {
+  width: 100%;
+}
 
 /*---------- Toggle Switch Start ----------*/
 /* The switch - the box around the slider */
