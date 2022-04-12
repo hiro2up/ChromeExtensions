@@ -26,6 +26,21 @@ button {
 
 #submitChoices {
   width: 100%;
+  margin-bottom: 10px;
+}
+
+#savePreset {
+  width: 100%;
+}
+
+#applyPreset {
+  margin-top: 5px;
+  width: 100%;
+}
+
+#deletePreset {
+  margin-top: 5px;
+  width: 100%;
 }
 
 /*---------- Toggle Switch Start ----------*/

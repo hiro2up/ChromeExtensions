@@ -6,9 +6,15 @@
     "background": {
         "service_worker": "background.js"
     },
-    "permissions": ["tabs", "activeTab", "scripting"],
+    "permissions": ["tabs", "activeTab", "scripting", "storage"],
     "action": {
         "default_popup": "popup.html"
-    }
+    },
+      "icons": {
+        "16": "/images/dbicon.png",
+        "32": "/images/dbicon.png",
+        "48": "/images/dbicon.png",
+        "128": "/images/dbicon.png"
+      }
     
   }

@@ -62,7 +62,18 @@
         <input type="text" id="customFields" name="customFields">
       </div>
     </form>
-    <button id="submitChoices" class="btn btn-success">Submit</button>
+    <button id="submitChoices" class="btn btn-success pb-4">Submit</button>
+    <button id="savePreset" class="btn btn-primary pb-4">Save Preset</button>
+    <br><br>
+
+    <div>
+      <label for="myPresets">My Presets:</label>
+      <select name="myPresets" id="myPresets">
+        <!-- <option value="preset1">preset1</option> -->
+      </select>
+      <button id="applyPreset" class="btn btn-success pb-4">Apply Preset</button>
+      <button id="deletePreset" class="btn btn-danger pb-4">Delete Preset</button>
+    </div>
 
     <script src="popup.js"></script>
   </body>
