@@ -1,31 +1,3 @@
-// When the button is clicked, inject forceBolt into current page
-// boltLive.addEventListener("click", async () => {
-//     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-//     chrome.scripting.executeScript({
-//       target: { tabId: tab.id },
-//       function: boltLiveFunc(tab),
-//     });
-//   });
-
-// tbLive.addEventListener("click", async () => {
-//     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-//     chrome.scripting.executeScript({
-//       target: { tabId: tab.id },
-//       function: tbLiveFunc(tab),
-//     });
-//   });
-
-// nameButton.addEventListener("click", async () => {
-//     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-//     chrome.scripting.executeScript({
-//       target: { tabId: tab.id },
-//       function: nameFunc(tab),
-//     });
-//   });
-
 /////// CLICK EVENT LISTENERS
 // Click event for submiting choices in from the switches
 submitChoices.addEventListener("click", async () => {
@@ -73,13 +45,27 @@ deletePreset.addEventListener("click", async () => {
 
 // Populating presets dropdown
 let myPresets = document.getElementById('myPresets');
+
 chrome.storage.local.get(null, function(items) {
     var allKeys = Object.keys(items);
     console.log(allKeys);
     for (index in allKeys) {
         myPresets.options[myPresets.options.length] = new Option(allKeys[index], index);
     }
+    
 });
+
+let myPresetFields = document.getElementById('presetFields');
+myPresetFields.innerText = myPresets.options[0].text;
+
+myPresets.addEventListener("change", function() {
+  selectedPreset = myPresets.options[myPresets.selectedIndex].text
+  chrome.storage.local.get([selectedPreset], function(result) {
+    myPresetFields.innerText = result.key.join('');
+  })
+  
+})
+
 
 
 
@@ -179,16 +165,30 @@ function savePresetFunc(tab){
 // Delete preset function
 function deletePresetFunc(tab){
   let select = document.getElementById("myPresets");
-  let chosenPreset = select.option[select.selectedIndex].text;
-  chrome.storage.local.clear();
-  chrome.storage.local.remove([chosenPreset]);
-  window.location.href = "popup.html";
+  let chosenPreset = select.options[select.selectedIndex].text;
+  // chrome.storage.local.clear();
+  chrome.storage.local.remove([chosenPreset], function() {
+    alert('Preset removed successfully!');
+    window.location.href = "popup.html";
+  });
   // chrome.storage.local.remove([chosenPreset],function(){
   //   var error = chrome.runtime.lastError;
   //      if (error) {
   //          console.error(error);
   //      }
   //  })
+}
+
+// Apply preset function
+function applyPresetFunc(tab) {
+  let select = document.getElementById("myPresets");
+  let chosenPreset = select.options[select.selectedIndex].text;
+  chrome.storage.local.get([chosenPreset], function(result) {
+    let params = result.key;
+    var url = tab.url;
+    var newUrl = url.substring(0,url.indexOf('&fields')+8) + params.join(',') + url.substring(url.indexOf('&levels'))
+    chrome.tabs.update(tab.id, {url: newUrl});
+  })
 }
 
 // Looping through the form to get the input
