@@ -1,5 +1,5 @@
 /////// CLICK EVENT LISTENERS
-// Click event for submiting choices in from the switches
+// Click event for submiting choices
 submitChoices.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -61,7 +61,7 @@ myPresetFields.innerText = myPresets.options[0].text;
 myPresets.addEventListener("change", function() {
   selectedPreset = myPresets.options[myPresets.selectedIndex].text
   chrome.storage.local.get([selectedPreset], function(result) {
-    myPresetFields.innerText = result.key.join('');
+    myPresetFields.innerText = result[selectedPreset];
   })
   
 })
@@ -134,19 +134,12 @@ myPresets.addEventListener("change", function() {
 // }
 
 
-// Collecting the switch values
+// Applying the switch values
 function fieldChoices(tab){
-  // console.log('test');
-  // const form = document.getElementById('fieldChoices');
-  // Array.from(form.elements).forEach(element => {
-  //   console.log(element);
-  // });
-
-  // var customParam = encodeURI('name');
   var url = tab.url;
   let choices = getChoicesFromForm();
   if (choices.length > 0) {
-    var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices.join(',') + url.substring(url.indexOf('&levels'))
+    var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
     chrome.tabs.update(tab.id, {url: newUrl});
   }
 }
@@ -155,6 +148,9 @@ function fieldChoices(tab){
 function savePresetFunc(tab){
   let choices = getChoicesFromForm();
   let presetName = prompt("Please enter your preset name","My Preset");
+  if (presetName === null) {
+    return; //break out of the function early
+  }
   chrome.storage.local.set({[presetName]: choices}, function() {
     alert('Preset saved succesfully!')
     window.location.href = "popup.html";
@@ -171,22 +167,16 @@ function deletePresetFunc(tab){
     alert('Preset removed successfully!');
     window.location.href = "popup.html";
   });
-  // chrome.storage.local.remove([chosenPreset],function(){
-  //   var error = chrome.runtime.lastError;
-  //      if (error) {
-  //          console.error(error);
-  //      }
-  //  })
 }
 
 // Apply preset function
 function applyPresetFunc(tab) {
   let select = document.getElementById("myPresets");
   let chosenPreset = select.options[select.selectedIndex].text;
-  chrome.storage.local.get([chosenPreset], function(result) {
-    let params = result.key;
+  chrome.storage.local.get(chosenPreset, function(result) {
+    let params = result[chosenPreset];
     var url = tab.url;
-    var newUrl = url.substring(0,url.indexOf('&fields')+8) + params.join(',') + url.substring(url.indexOf('&levels'))
+    var newUrl = url.substring(0,url.indexOf('&fields')+8) + params + url.substring(url.indexOf('&levels'))
     chrome.tabs.update(tab.id, {url: newUrl});
   })
 }
@@ -197,12 +187,12 @@ function getChoicesFromForm(){
   let choices = [];
   Array.from(form).forEach(element => {
     if (element.checked && element.type === 'checkbox'){
-      // console.log(element.id.substring(0,element.id.length-6));
       choices.push(element.id.substring(0,element.id.length-6));
     }
     if (element.value !== '' && element.type === 'text')  {
-      choices.push(element.value);
+      let noSpace = element.value.replace(/\s+/g, '');
+      choices.push(noSpace);
     }
   });
-  return choices;
+  return choices.join();
 }

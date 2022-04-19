@@ -1,5 +1,5 @@
 body {
-    min-width: 300px;
+    width: 300px;
     padding: 5px;
 }
 
@@ -24,6 +24,10 @@ button {
   font-size: 14px;
 }
 
+#customFields {
+  width: 96%;
+}
+
 #submitChoices {
   width: 100%;
   margin-bottom: 10px;
@@ -42,6 +46,12 @@ button {
   margin-top: 5px;
   width: 100%;
 }
+
+#presetFields {
+  color:darkgray;
+  word-wrap: break-word;
+}
+
 
 /*---------- Toggle Switch Start ----------*/
 /* The switch - the box around the slider */
