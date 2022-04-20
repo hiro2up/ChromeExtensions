@@ -68,72 +68,6 @@ myPresets.addEventListener("change", function() {
 
 
 
-
-
-// The body of this function will be executed as a content script inside the
-// current page
-
-// function boltLiveFunc(tab){
-//     var customParam = encodeURI('forceBolt');
-//     var url = tab.url;
-
-//     if (url.indexOf(customParam) === -1){
-//         var hashStart = (url.indexOf('#') === -1) ? url.length : url.indexOf('#');
-//         var querySymbol = (url.indexOf('?') === -1) ? '?' : '&';
-//         var newUrl = url.substring(0, hashStart) + querySymbol + customParam +
-//                     url.substring(hashStart);
-
-//         chrome.tabs.update(tab.id, {url: newUrl});
-//     } else {
-//         var newUrl = url;
-//         chrome.tabs.update(tab.id, {url: newUrl});
-//     }
-// }
-
-
-// function tbLiveFunc(tab){
-//     var customParam = encodeURI('forceBolt');
-//     var url = tab.url;
-
-//     if (url.indexOf(customParam) === -1){
-//         var newUrl = url;
-//         chrome.tabs.update(tab.id, {url: newUrl});
-//     } else {
-//         if (url.indexOf(customParam+'&') === -1){
-//             var newUrl = url.substring(0,url.indexOf(customParam)-1);
-//             chrome.tabs.update(tab.id, {url: newUrl});
-//         }
-//     }
-// }
-
-
-// Functions for table columns
-// function nameFunc(tab){
-//     var customParam = encodeURI('name');
-//     var url = tab.url;
-
-//     if(url.indexOf(','+customParam) === -1 && url.indexOf('%3D'+customParam) === -1){
-//         var newUrl = url.substring(0,url.indexOf('&fields')+8) + customParam + url.substring(url.indexOf('&levels'))
-//         chrome.tabs.update(tab.id, {url: newUrl});
-        
-//         // chrome.tabs.onUpdated.addListener(
-//         //   tab.id, {url: newUrl}
-//         // );
-//         // chrome.tabs.reload();
-
-//         // window.addEventListener('keydown', (e) => {
-//         //   console.log(e)
-//         // })
-
-        
-        
-//         // window.dispatchEvent(new KeyboardEvent('keydown', {
-//         //   'key': 'F5'
-//         // }));
-//     }
-// }
-
-
 // Applying the switch values
 function fieldChoices(tab){
   var url = tab.url;
@@ -141,6 +75,10 @@ function fieldChoices(tab){
   if (choices.length > 0) {
     var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
     chrome.tabs.update(tab.id, {url: newUrl});
+    // chrome.tabs.getSelected(null, function(tab) {
+    //   var code = 'window.location.reload();';
+    //   chrome.tabs.executeScript(tab.id, {code: code});
+    // });
   }
 }
 
