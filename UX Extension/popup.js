@@ -1,15 +1,41 @@
 /////// CLICK EVENT LISTENERS
 // Click event for submiting choices
+// submitChoices.addEventListener("click", async () => {
+//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+//     chrome.scripting.executeScript({
+//       target: { tabId: tab.id },
+//       function: fieldChoices(tab),
+//     });
+// });
+// async function example() {
+//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+//   chrome.scripting.executeScript({
+//     target: { tabId: tab.id },
+//     function: fieldChoices(tab),
+//     files: ["background.js"],
+//     files: ["popup.html"],
+//     files: ["popup.js"],
+//   });
+// }
 submitChoices.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  let url = fieldChoices(tab);
+  chrome.tabs.update(tab.id, { url });
+  chrome.tabs.onUpdated.addListener(function () {
+    chrome.tabs.reload();
     
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: fieldChoices(tab),
-    });
+  });
+  // chrome.tabs.query({ active: true, currentWindow: true }, function () {
+  //   chrome.tabs.update(tab.id, { url });
+  //   chrome.tabs.onUpdated.addListener(function () {
+  //     chrome.tabs.reload();
+      
+  //   });
+  // });
 });
 
-// Click event for saving presets
+// Click event for saving presets (CLEAR)
 savePreset.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -19,7 +45,7 @@ savePreset.addEventListener("click", async () => {
     });
 })
 
-// Applying selected preset
+// Applying selected preset (CLEAR)
 applyPreset.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -29,7 +55,7 @@ applyPreset.addEventListener("click", async () => {
     });
 });
 
-// Delete selected preset
+// Delete selected preset (CLEAR)
 deletePreset.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -43,7 +69,7 @@ deletePreset.addEventListener("click", async () => {
 
 
 
-// Populating presets dropdown
+// Populating presets dropdown (CLEAR)
 let myPresets = document.getElementById('myPresets');
 
 chrome.storage.local.get(null, function(items) {
@@ -68,13 +94,16 @@ myPresets.addEventListener("change", function() {
 
 
 
-// Applying the switch values
+// Applying the switch values (CLEAR) Creating Url with the field choices
 function fieldChoices(tab){
   var url = tab.url;
   let choices = getChoicesFromForm();
   if (choices.length > 0) {
     var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
-    chrome.tabs.update(tab.id, {url: newUrl});
+    //chrome.tabs.update(tab.id, {url: newUrl});
+    return newUrl; //this is new
+
+
     // chrome.tabs.getSelected(null, function(tab) {
     //   var code = 'window.location.reload();';
     //   chrome.tabs.executeScript(tab.id, {code: code});
@@ -82,7 +111,7 @@ function fieldChoices(tab){
   }
 }
 
-// Save Preset Function
+// Save Preset Function (CLEAR)
 function savePresetFunc(tab){
   let choices = getChoicesFromForm();
   let presetName = prompt("Please enter your preset name","My Preset");
@@ -96,7 +125,7 @@ function savePresetFunc(tab){
   })
 }
 
-// Delete preset function
+// Delete preset function (CLEAR)
 function deletePresetFunc(tab){
   let select = document.getElementById("myPresets");
   let chosenPreset = select.options[select.selectedIndex].text;
@@ -119,7 +148,7 @@ function applyPresetFunc(tab) {
   })
 }
 
-// Looping through the form to get the input
+// Looping through the form to get the input (CLEAR)
 function getChoicesFromForm(){
   const form = document.getElementById('fieldChoices').elements;
   let choices = [];
