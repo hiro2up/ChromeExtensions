@@ -22,10 +22,13 @@ submitChoices.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   let url = fieldChoices(tab);
   chrome.tabs.update(tab.id, { url });
-  chrome.tabs.onUpdated.addListener(function () {
-    chrome.tabs.reload();
+  
+  
+  // chrome.tabs.onUpdated.addListener(function (tab) {
+  //   chrome.tabs.reload(tab.id);
     
-  });
+  // });
+
   // chrome.tabs.query({ active: true, currentWindow: true }, function () {
   //   chrome.tabs.update(tab.id, { url });
   //   chrome.tabs.onUpdated.addListener(function () {
@@ -33,6 +36,12 @@ submitChoices.addEventListener("click", async () => {
       
   //   });
   // });
+
+  chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
+    if(details.frameId === 0) {
+      chrome.tabs.reload();
+    }
+  });
 });
 
 // Click event for saving presets (CLEAR)
