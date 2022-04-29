@@ -1,13 +1,13 @@
 /////// CLICK EVENT LISTENERS
 // Click event for submiting choices
-// submitChoices.addEventListener("click", async () => {
-//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+submitChoices.addEventListener("click", async () => {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
-//     chrome.scripting.executeScript({
-//       target: { tabId: tab.id },
-//       function: fieldChoices(tab),
-//     });
-// });
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: fieldChoices(tab),
+    });
+});
 // async function example() {
 //   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 //   chrome.scripting.executeScript({
@@ -18,31 +18,103 @@
 //     files: ["popup.js"],
 //   });
 // }
-submitChoices.addEventListener("click", async () => {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  let url = fieldChoices(tab);
-  chrome.tabs.update(tab.id, { url });
+
+// submitChoices.addEventListener("click", async () => {
+//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+//   let url = fieldChoices(tab);
+//   chrome.tabs.update(tab.id, { url });
   
   
-  // chrome.tabs.onUpdated.addListener(function (tab) {
-  //   chrome.tabs.reload(tab.id);
+//   // chrome.tabs.onUpdated.addListener(function (tab) {
+//   //   chrome.tabs.reload(tab.id);
     
-  // });
+//   // });
 
-  // chrome.tabs.query({ active: true, currentWindow: true }, function () {
-  //   chrome.tabs.update(tab.id, { url });
-  //   chrome.tabs.onUpdated.addListener(function () {
-  //     chrome.tabs.reload();
+//   // chrome.tabs.query({ active: true, currentWindow: true }, function () {
+//   //   chrome.tabs.update(tab.id, { url });
+//   //   chrome.tabs.onUpdated.addListener(function () {
+//   //     chrome.tabs.reload();
       
-  //   });
-  // });
+//   //   });
+//   // });
 
-  chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
-    if(details.frameId === 0) {
-      chrome.tabs.reload();
-    }
-  });
-});
+//   chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
+//     if(details.frameId === 0) {
+//       chrome.tabs.reload();
+//     }
+//   });
+// });
+
+let choiceStack = [];
+
+// Changing the Url with the switches
+// function applySwitches(mySwitch) {
+//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+//   let funcSwitch = document.getElementById(mySwitch);
+//   let choice = funcSwitch.value;
+//   var url = tab.url;
+
+//   if (funcSwitch.checked) {
+//     choiceStack.push(choice);
+//   } else {
+//     const index = choiceStack.indexOf(choice);
+//     choiceStack.splice(index,1);
+//   }
+
+//   var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
+//   chrome.tabs.update(tab.id, {url: newUrl});
+// }
+
+// date_created
+date_createdSwitch.addEventListener("change", async ()=> {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  let date_createdSwitch = document.getElementById('date_createdSwitch');
+  let choice = date_createdSwitch.value;
+  var url = tab.url;
+
+  if (date_createdSwitch.checked) {
+    choiceStack.push(choice);
+  } else {
+    choiceStack.splice(choiceStack.indexOf(choice),1);
+  }
+
+  var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
+  chrome.tabs.update(tab.id, {url: newUrl});
+})
+
+
+// src
+srcSwitch.addEventListener("change", async ()=> {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  let srcSwitch = document.getElementById('srcSwitch');
+  let choice = srcSwitch.value;
+  var url = tab.url;
+
+  if (srcSwitch.checked) {
+    choiceStack.push(choice);
+  } else {
+    choiceStack.splice(choiceStack.indexOf(choice),1);
+  }
+
+  var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
+  chrome.tabs.update(tab.id, {url: newUrl});
+})
+
+customFields.addEventListener("change", async () => {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  let choice = document.getElementById('customFields').value;
+  var url = tab.url;
+  
+  if (choice.length > 0) {
+    choiceStack.push(choice);
+  } else {
+    const index = choiceStack.indexOf(choice);
+    choiceStack.splice(index,1);
+  }
+
+  var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
+  chrome.tabs.update(tab.id, {url: newUrl});
+})
 
 // Click event for saving presets (CLEAR)
 savePreset.addEventListener("click", async () => {
@@ -107,17 +179,23 @@ myPresets.addEventListener("change", function() {
 function fieldChoices(tab){
   var url = tab.url;
   let choices = getChoicesFromForm();
-  if (choices.length > 0) {
-    var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
-    //chrome.tabs.update(tab.id, {url: newUrl});
-    return newUrl; //this is new
+  chrome.tabs.reload();
+  // if (choices.length > 0) {
+  //   var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
+  //   chrome.tabs.update(tab.id, {url: newUrl});
+  //   // return newUrl; //this is new
 
+  //   chrome.tabs.onUpdated.addListener(function () {
+  //     chrome.tabs.reload();
+      
+  //   });
 
-    // chrome.tabs.getSelected(null, function(tab) {
-    //   var code = 'window.location.reload();';
-    //   chrome.tabs.executeScript(tab.id, {code: code});
-    // });
-  }
+  //   // chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
+  //   //   if(details.frameId === 0) {
+  //   //     chrome.tabs.reload();
+  //   //   }
+  //   // });
+  // }
 }
 
 // Save Preset Function (CLEAR)
