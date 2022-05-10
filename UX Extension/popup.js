@@ -1,142 +1,98 @@
-/////// CLICK EVENT LISTENERS
-// Click event for submiting choices
+///////////////////// TOOL OPTIONS
+////////// SUBMITTING SELECTED FIELDS
+// Event for submitting choices
 submitChoices.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      function: fieldChoices(tab),
+      function: reloadTab(),
     });
 });
-// async function example() {
-//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-//   chrome.scripting.executeScript({
-//     target: { tabId: tab.id },
-//     function: fieldChoices(tab),
-//     files: ["background.js"],
-//     files: ["popup.html"],
-//     files: ["popup.js"],
-//   });
-// }
 
-// submitChoices.addEventListener("click", async () => {
-//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-//   let url = fieldChoices(tab);
-//   chrome.tabs.update(tab.id, { url });
-  
-  
-//   // chrome.tabs.onUpdated.addListener(function (tab) {
-//   //   chrome.tabs.reload(tab.id);
-    
-//   // });
-
-//   // chrome.tabs.query({ active: true, currentWindow: true }, function () {
-//   //   chrome.tabs.update(tab.id, { url });
-//   //   chrome.tabs.onUpdated.addListener(function () {
-//   //     chrome.tabs.reload();
-      
-//   //   });
-//   // });
-
-//   chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
-//     if(details.frameId === 0) {
-//       chrome.tabs.reload();
-//     }
-//   });
-// });
-
-let choiceStack = [];
-
-// Changing the Url with the switches
-// function applySwitches(mySwitch) {
-//   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-//   let funcSwitch = document.getElementById(mySwitch);
-//   let choice = funcSwitch.value;
-//   var url = tab.url;
-
-//   if (funcSwitch.checked) {
-//     choiceStack.push(choice);
-//   } else {
-//     const index = choiceStack.indexOf(choice);
-//     choiceStack.splice(index,1);
-//   }
-
-//   var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
-//   chrome.tabs.update(tab.id, {url: newUrl});
-// }
-
-// date_created
-date_createdSwitch.addEventListener("change", async ()=> {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  let date_createdSwitch = document.getElementById('date_createdSwitch');
-  let choice = date_createdSwitch.value;
+// Event for applying chosen fields to the URL
+submitChoices.addEventListener("mouseover", async () => {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
   var url = tab.url;
-
-  if (date_createdSwitch.checked) {
-    choiceStack.push(choice);
-  } else {
-    choiceStack.splice(choiceStack.indexOf(choice),1);
+  let choices = getChoicesFromForm();
+  if (choices.length > 0) {
+    var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
+    chrome.tabs.update(tab.id, {url: newUrl});
   }
-
-  var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
-  chrome.tabs.update(tab.id, {url: newUrl});
 })
 
+// Looping through the form to get the input (CLEAR)
+function getChoicesFromForm(){
+  const form = document.getElementById('fieldChoices').elements;
+  let choices = [];
+  Array.from(form).forEach(element => {
+    if (element.checked && element.type === 'checkbox'){
+      choices.push(element.id.substring(0,element.id.length-6));
+    }
+    if (element.value !== '' && element.type === 'text')  {
+      let noSpace = element.value.replace(/\s+/g, '');
+      choices.push(noSpace);
+    }
+  });
+  return choices.join();
+}
 
-// src
-srcSwitch.addEventListener("change", async ()=> {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  let srcSwitch = document.getElementById('srcSwitch');
-  let choice = srcSwitch.value;
-  var url = tab.url;
 
-  if (srcSwitch.checked) {
-    choiceStack.push(choice);
-  } else {
-    choiceStack.splice(choiceStack.indexOf(choice),1);
-  }
 
-  var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
-  chrome.tabs.update(tab.id, {url: newUrl});
-})
-
-customFields.addEventListener("change", async () => {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  let choice = document.getElementById('customFields').value;
-  var url = tab.url;
-  
-  if (choice.length > 0) {
-    choiceStack.push(choice);
-  } else {
-    const index = choiceStack.indexOf(choice);
-    choiceStack.splice(index,1);
-  }
-
-  var newUrl = url.substring(0,url.indexOf('&fields')+8) + choiceStack.join() + url.substring(url.indexOf('&levels'));
-  chrome.tabs.update(tab.id, {url: newUrl});
-})
-
-// Click event for saving presets (CLEAR)
+////////// SAVING PRESET
+// Event for creating new preset
 savePreset.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      function: savePresetFunc(tab),
+      function: savePresetFunc(),
     });
 })
 
-// Applying selected preset (CLEAR)
+// Save Preset Function
+function savePresetFunc(){
+  let choices = getChoicesFromForm();
+  let presetName = prompt("Please enter your preset name","My Preset");
+  if (presetName === null) {
+    return; //break out of the function early
+  }
+  chrome.storage.local.set({[presetName]: choices}, function() {
+    alert('Preset saved succesfully!')
+    window.location.href = "popup.html";
+
+  })
+}
+
+
+////////// APPLYING SAVED PRESET
+// Event for applying chosen preset
 applyPreset.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      function: applyPresetFunc(tab),
+      function: reloadTab(),
     });
 });
 
-// Delete selected preset (CLEAR)
+// Event for applying preset fields to the URL
+applyPreset.addEventListener("mouseover", async () => {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  let select = document.getElementById("myPresets");
+  let chosenPreset = select.options[select.selectedIndex].text;
+  chrome.storage.local.get(chosenPreset, function(result) {
+    let params = result[chosenPreset];
+    var url = tab.url;
+    var newUrl = url.substring(0,url.indexOf('&fields')+8) + params + url.substring(url.indexOf('&levels'))
+    chrome.tabs.update(tab.id, {url: newUrl});
+  })
+  
+})
+
+
+////////// DELETE SAVED PRESET
+// Event for deleting preset
 deletePreset.addEventListener("click", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -146,11 +102,22 @@ deletePreset.addEventListener("click", async () => {
     });
 });
 
+// Delete preset function (CLEAR)
+function deletePresetFunc(tab){
+  let select = document.getElementById("myPresets");
+  let chosenPreset = select.options[select.selectedIndex].text;
+  // chrome.storage.local.clear();
+  chrome.storage.local.remove([chosenPreset], function() {
+    alert('Preset removed successfully!');
+    window.location.href = "popup.html";
+  });
+}
 
 
 
 
-// Populating presets dropdown (CLEAR)
+
+////////// Populating presets dropdown
 let myPresets = document.getElementById('myPresets');
 
 chrome.storage.local.get(null, function(items) {
@@ -174,79 +141,11 @@ myPresets.addEventListener("change", function() {
 })
 
 
-
-// Applying the switch values (CLEAR) Creating Url with the field choices
-function fieldChoices(tab){
-  var url = tab.url;
-  let choices = getChoicesFromForm();
+////////// Tab reload function
+function reloadTab() {
   chrome.tabs.reload();
-  // if (choices.length > 0) {
-  //   var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
-  //   chrome.tabs.update(tab.id, {url: newUrl});
-  //   // return newUrl; //this is new
-
-  //   chrome.tabs.onUpdated.addListener(function () {
-  //     chrome.tabs.reload();
-      
-  //   });
-
-  //   // chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
-  //   //   if(details.frameId === 0) {
-  //   //     chrome.tabs.reload();
-  //   //   }
-  //   // });
-  // }
 }
 
-// Save Preset Function (CLEAR)
-function savePresetFunc(tab){
-  let choices = getChoicesFromForm();
-  let presetName = prompt("Please enter your preset name","My Preset");
-  if (presetName === null) {
-    return; //break out of the function early
-  }
-  chrome.storage.local.set({[presetName]: choices}, function() {
-    alert('Preset saved succesfully!')
-    window.location.href = "popup.html";
 
-  })
-}
 
-// Delete preset function (CLEAR)
-function deletePresetFunc(tab){
-  let select = document.getElementById("myPresets");
-  let chosenPreset = select.options[select.selectedIndex].text;
-  // chrome.storage.local.clear();
-  chrome.storage.local.remove([chosenPreset], function() {
-    alert('Preset removed successfully!');
-    window.location.href = "popup.html";
-  });
-}
 
-// Apply preset function
-function applyPresetFunc(tab) {
-  let select = document.getElementById("myPresets");
-  let chosenPreset = select.options[select.selectedIndex].text;
-  chrome.storage.local.get(chosenPreset, function(result) {
-    let params = result[chosenPreset];
-    var url = tab.url;
-    var newUrl = url.substring(0,url.indexOf('&fields')+8) + params + url.substring(url.indexOf('&levels'))
-    chrome.tabs.update(tab.id, {url: newUrl});
-  })
-}
-
-// Looping through the form to get the input (CLEAR)
-function getChoicesFromForm(){
-  const form = document.getElementById('fieldChoices').elements;
-  let choices = [];
-  Array.from(form).forEach(element => {
-    if (element.checked && element.type === 'checkbox'){
-      choices.push(element.id.substring(0,element.id.length-6));
-    }
-    if (element.value !== '' && element.type === 'text')  {
-      let noSpace = element.value.replace(/\s+/g, '');
-      choices.push(noSpace);
-    }
-  });
-  return choices.join();
-}

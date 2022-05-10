@@ -1,5 +1,5 @@
 body {
-    width: 320px;
+    width: 400px;
     padding: 15px;
 }
 
@@ -22,6 +22,18 @@ button {
 
 #fieldChoices label {
   font-size: 14px;
+}
+
+#switchColumn1 {
+  float: left;
+  width: 50%;
+  border-right: grey 1px solid;
+  margin-right: 10%;
+}
+
+#switchColumn2 {
+  float: right;
+  width: 40%;
 }
 
 #customFields {
