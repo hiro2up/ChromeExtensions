@@ -15,10 +15,13 @@ submitChoices.addEventListener("mouseover", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
   var url = tab.url;
   let choices = getChoicesFromForm();
-  if (choices.length > 0) {
-    var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
-    chrome.tabs.update(tab.id, {url: newUrl});
+  if (validateUrl(url)){
+    if (choices.length > 0) {
+      var newUrl = url.substring(0,url.indexOf('&fields')+8) + choices + url.substring(url.indexOf('&levels'))
+      chrome.tabs.update(tab.id, {url: newUrl});
+    }
   }
+  
 })
 
 // Looping through the form to get the input (CLEAR)
@@ -81,12 +84,17 @@ applyPreset.addEventListener("mouseover", async () => {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   let select = document.getElementById("myPresets");
   let chosenPreset = select.options[select.selectedIndex].text;
-  chrome.storage.local.get(chosenPreset, function(result) {
-    let params = result[chosenPreset];
-    var url = tab.url;
-    var newUrl = url.substring(0,url.indexOf('&fields')+8) + params + url.substring(url.indexOf('&levels'))
-    chrome.tabs.update(tab.id, {url: newUrl});
-  })
+  if (chosenPreset !== 'Select your preset'){
+    chrome.storage.local.get(chosenPreset, function(result) {
+      let params = result[chosenPreset];
+      var url = tab.url;
+      if (validateUrl(url)) {
+        var newUrl = url.substring(0,url.indexOf('&fields')+8) + params + url.substring(url.indexOf('&levels'))
+        chrome.tabs.update(tab.id, {url: newUrl});
+      }
+    })
+  }
+  
   
 })
 
@@ -144,6 +152,16 @@ myPresets.addEventListener("change", function() {
 ////////// Tab reload function
 function reloadTab() {
   chrome.tabs.reload();
+}
+
+
+////////// Validate BO URL
+function validateUrl(url) {
+  if (url.indexOf('bo.wix.com/bi-ux/#/history') !== -1){
+    return true;
+  } else {
+    return false;
+  }
 }
 
 
