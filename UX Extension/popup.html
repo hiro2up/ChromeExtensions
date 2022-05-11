@@ -81,25 +81,29 @@
           <label class="form-check-label" for="page_idSwitch">extra_fields</label>
         </div>
       </div>
-
+      
 
       <div>
-        <label for="customFields">Custom Fields:</label>
+        <label for="customFields" class="fw-bold mt-3">Custom Fields: (use commas to separate)</label>
         <input type="text" id="customFields" name="customFields">
       </div>
     </form>
-    <button id="submitChoices" class="btn btn-success pb-4">Submit Choices</button>
-    <button id="savePreset" class="btn btn-primary pb-4">Save Preset</button>
-    <br><br>
+    <div class="text-center">
+      <button id="submitChoices" class="buttons">Submit Choices</button>
+      <button id="savePreset" class="buttons">Save Preset</button>
+    </div>
+    
 
-    <div>
-      <label for="myPresets">My Presets:</label>
-      <select name="myPresets" id="myPresets">
+    <div id="presetbox">
+      <label for="myPresets" class="fw-bold">My Presets:</label>
+      <select name="myPresets" id="myPresets" class="btn btn-light dropdown-toggle">
         <option value="" disabled selected>Select your preset</option>
       </select>
       <div id="presetFields"></div>
-      <button id="applyPreset" class="btn btn-success pb-4">Apply Preset</button>
-      <button id="deletePreset" class="btn btn-danger pb-4">Delete Preset</button>
+      <div class="text-center mt-2">
+        <button id="applyPreset" class="buttons">Apply Preset</button>
+        <button id="deletePreset" class="buttons">Delete Preset</button>
+      </div>
     </div>
 
     <script src="popup.js"></script>

@@ -1,20 +1,20 @@
 {
-    "name": "UX Query Extension",
-    "description": "Build an Extension!",
+    "name": "UX Query Tool",
+    "description": "Extension for fast query using User Explorer",
     "version": "1.0",
     "manifest_version": 3,
     "background": {
         "service_worker": "background.js"
     },
-    "permissions": ["tabs", "activeTab", "scripting", "storage","webNavigation"],
+    "permissions": ["tabs", "activeTab", "scripting", "storage"],
     "action": {
         "default_popup": "popup.html"
     },
       "icons": {
-        "16": "/images/dbicon.png",
-        "32": "/images/dbicon.png",
-        "48": "/images/dbicon.png",
-        "128": "/images/dbicon.png"
+        "16": "/images/UX_logo.png",
+        "32": "/images/UX_logo.png",
+        "48": "/images/UX_logo.png",
+        "128": "/images/UX_logo.png"
       }
     
   }
